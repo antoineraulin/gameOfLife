@@ -28,17 +28,17 @@ namespace life
             // visuState : le on/off de tout a l'heure
 
             InitializeComponent();
-            l("données",$" x : {x} | y : {y} | t : {t} | visuState : {visuState}");
+            l("données", $" x : {x} | y : {y} | t : {t} | visuState : {visuState}");
             grille = new int[x, y];
             InitGrille(x, y, t);
 
-            
+
         }
 
         public void InitGrille(int x, int y, double t)
         {
             int nCase = x * y; // nombre de cases total dans la grille
-            l("nCase",nCase.ToString());
+            l("nCase", nCase.ToString());
             int n = (int)(t * nCase); // nombre de case a remplir pour atteindre le taux spécifié
             l("n", n.ToString());
             for (int i = 0; i < nCase; i++)
@@ -47,8 +47,8 @@ namespace life
                 int iLigne = i / y;
                 int iCol = i % y;
 
-                grille[iLigne, iCol] = i<n? 1:0; // si i est dans l'interval [0,n[ alors la case doit contenir un 1 parce qu'on est encore dans le cadre du taux fixé, sinon on met un 0.
-                
+                grille[iLigne, iCol] = i < n ? 1 : 0; // si i est dans l'interval [0,n[ alors la case doit contenir un 1 parce qu'on est encore dans le cadre du taux fixé, sinon on met un 0.
+
             }
 
             //maintenant que la grille est remplit au taux fixé on la mélange
@@ -66,7 +66,7 @@ namespace life
             int nCase = nLignes * nCols; // nombre de cases total dans la grille
 
             Random random = new Random();
-            for(int i = 0;i<nCase - 1; i++) // on se balade dans la grille
+            for (int i = 0; i < nCase - 1; i++) // on se balade dans la grille
             {
                 int j = random.Next(i, nCase); // on prend un nombre aléatoire entre la position i et la fin de notre grille [.Next(Int32, Int32) => Retourne un entier aléatoire qui se trouve dans une plage spécifiée.] ==> on déplace la case actuelle a une position aléatoire.
 
@@ -83,12 +83,7 @@ namespace life
             }
         }
 
-        public void Evoluer()
-        {
-
-        }
-
-        public void Voisins(int x, int y) // renvoi le nombre de voisins vivants autour d'une coordonnée donnée
+        public int Voisins(int x, int y) // renvoi le nombre de voisins vivants autour d'une coordonnée donnée
         {
             //on récupère les dimensions de la grille
             int nLignes = grille.GetUpperBound(0) + 1; // GetUpperBound => on récupère l'index du dernier élements de la dimension n (ici 0)
@@ -96,22 +91,41 @@ namespace life
             int nCase = nLignes * nCols; // nombre de cases total dans la grille
 
             int vivants = 0;
-            for(int i = x - 1; i <= x + 1; i++)
+            for (int i = x - 1; i <= x + 1; i++)
             {
-                for(int j = y - 1; j <= y + 1; j++)
+                for (int j = y - 1; j <= y + 1; j++)
                 {
                     if (i < 0) //si i est trop a gauche de la grille on lui donne une valeur a droite puisque la grille est "ronde"
                     {
                         i = nCols + i;
                     }
-                    if(j < 0) //pareil pour j
+                    if (j < 0) //pareil pour j
                     {
                         j = nLignes + j;
                     }
                     //to be continued
                 }
             }
-
+            return vivants;
+        }
+        public bool Evoluer(int x, int y, int[,] grille) //renvoie vrai ou faux si la cellule est vivante ou morte au prochain tour
+        {
+            bool Vie = false;
+            if (grille[x, y] == 1)
+            {
+                if (Voisins(x, y) > 2 && Voisins(x, y) < 3)
+                {
+                    Vie = true;
+                }
+            }
+            else if (grille[x, y] == 0)
+            {
+                if (Voisins(x, y) == 3)
+                {
+                    Vie = true;
+                }
+            }
+            return Vie;
         }
 
         public static void Print2DArray<T>(T[,] matrix) //methode a supprimer avant envoi
@@ -132,7 +146,7 @@ namespace life
         }
         public void l(string tag, string data)
         {
-            Console.WriteLine("["+tag+"] "+data);
+            Console.WriteLine("[" + tag + "] " + data);
         }
     }
 }
