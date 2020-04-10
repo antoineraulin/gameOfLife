@@ -1,0 +1,17 @@
+C:\Users\antoi\source\repos\life\life\bin\Debug\life.exe.config
+C:\Users\antoi\source\repos\life\life\bin\Debug\life.exe
+C:\Users\antoi\source\repos\life\life\bin\Debug\life.pdb
+C:\Users\antoi\source\repos\life\life\obj\Debug\life.csprojAssemblyReference.cache
+C:\Users\antoi\source\repos\life\life\obj\Debug\init.g.cs
+C:\Users\antoi\source\repos\life\life\obj\Debug\MainWindow.g.cs
+C:\Users\antoi\source\repos\life\life\obj\Debug\App.g.cs
+C:\Users\antoi\source\repos\life\life\obj\Debug\life_MarkupCompile.cache
+C:\Users\antoi\source\repos\life\life\obj\Debug\life_MarkupCompile.lref
+C:\Users\antoi\source\repos\life\life\obj\Debug\init.baml
+C:\Users\antoi\source\repos\life\life\obj\Debug\MainWindow.baml
+C:\Users\antoi\source\repos\life\life\obj\Debug\life.g.resources
+C:\Users\antoi\source\repos\life\life\obj\Debug\life.Properties.Resources.resources
+C:\Users\antoi\source\repos\life\life\obj\Debug\life.csproj.GenerateResource.cache
+C:\Users\antoi\source\repos\life\life\obj\Debug\life.csproj.CoreCompileInputs.cache
+C:\Users\antoi\source\repos\life\life\obj\Debug\life.exe
+C:\Users\antoi\source\repos\life\life\obj\Debug\life.pdb
