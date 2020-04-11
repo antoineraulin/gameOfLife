@@ -29,9 +29,50 @@ namespace life
 
             InitializeComponent();
             l("données", $" x : {x} | y : {y} | t : {t} | visuState : {visuState}");
-            grille = new int[x, y];
+            grille = new int[10, 10];
             InitGrille(x, y, t);
-
+            for(int z = 0; z < 5; z++)
+            {
+                
+                int[,] tg = grille.Clone() as int[,];
+                for (int i = 0; i < x; i++)
+                {
+                    for (int j = 0; j < y; j++)
+                    {
+                        //l($"init -> Evoluer | {i}:{j}", Evoluer(i, j).ToString());
+                        int e = Evoluer(i, j);
+                        if (grille[i, j] != e)
+                        {
+                            tg[i, j] = e == 1 ? 42 : 666;
+                        }
+                        //grille[i, j] = e;
+                    }
+                }
+                for (int i = 0; i < x; i++)
+                {
+                    for (int j = 0; j < y; j++)
+                    {
+                        if (tg[i, j] == 42)
+                        {
+                            grille[i, j] = 1;
+                        }
+                        else if (tg[i, j] == 666)
+                        {
+                            grille[i, j] = 0;
+                        }
+                    }
+                }
+                if (visuState)
+                {
+                    l("Futur " + z);
+                    Print2DArray(tg);
+                }
+                
+                l("après Evolution "+z);
+                Print2DArray(grille);
+                System.Threading.Thread.Sleep(1000);
+            }
+            
 
         }
 
@@ -89,63 +130,93 @@ namespace life
             int nLignes = grille.GetUpperBound(0) + 1; // GetUpperBound => on récupère l'index du dernier élements de la dimension n (ici 0)
             int nCols = grille.GetUpperBound(1) + 1;
             int nCase = nLignes * nCols; // nombre de cases total dans la grille => inutile, on va l'enlever
-
+            //l("voisins -> données", $"x : {x} | y : {y} | nLignes : {nLignes} | nCols : {nCols}");
             int vivants = 0;
             for (int i = x - 1; i <= x + 1; i++)
             {
                 for (int j = y - 1; j <= y + 1; j++)
                 {
-                    if (i < 0) //si i est trop a gauche de la grille on lui donne une valeur a droite puisque la grille est "ronde"
+                    //l("voisins -> s1", $"{i}:{j}");
+                    int ti = i; // on copie i et j avant modif dans une mémoire tampon pour pouvoir faire des modifs dessus
+                    int tj = j;
+                    if (ti < 0) //si ti est trop en haut de la grille on lui donne une valeur en bas puisque la grille est "ronde"
                     {
-                        i = nCols + i;
+                        //l("voisins => Modif","m0");
+                        ti = nLignes + ti;
                     }
-                    if (j < 0) //pareil pour j
+                    if (tj < 0) //pareil pour tj
                     {
-                        j = nLignes + j;
+                        //l("voisins => Modif", "m1");
+                        tj = nCols + tj;
                     }
-                    if(i > nCols - 1) //si i est trop a droite de la grille on lui donne une valeur a gauche
+                    if(ti > nLignes - 1) //si ti est trop en bas de la grille on lui donne une valeur en haut
                     {
-                        i = i - nCols;
+                        //l("voisins => Modif", "m2");
+                        ti = ti - nLignes;
                     }
-                    if(j > nLignes - 1) // pareil pour j
+                    if(tj > nCols - 1) // pareil pour tj
                     {
-                        j = j - nLignes;
+                        //l("voisins => Modif", "m3");
+                        tj = tj - nCols;
                     }
-                    if(grille[i,j] == 1 && i!=x && j!=y) //si la case observé n'est pas la case dont on cherches les voisins et que la cellule qu'elle contient est vivante on incrémente le nombre de voisins vivants
-                    {
-                        vivants++;
-                    }
+                    //l("voisins -> s2", $"{ti}:{tj}");
+                    //l("voisins -> v", grille[ti, tj].ToString());
+                    vivants += grille[ti, tj];
+                    //l("#########################");
                 }
             }
+            //l("##################################################");
+            vivants -= grille[x,y]; // on retire la cellule observé du comptage si elle etait vivante
             return vivants;
         }
-        public bool Evoluer(int x, int y, int[,] grille) //renvoie vrai ou faux si la cellule est vivante ou morte au prochain tour
+        public int Evoluer(int x, int y) //renvoie vrai ou faux si la cellule est vivante ou morte au prochain tour
         {
-            bool Vie = false;
+            int vie = 0;
             if (grille[x, y] == 1)
             {
-                if (Voisins(x, y) > 2 && Voisins(x, y) < 3)
+                if (Voisins(x, y) >= 2 && Voisins(x, y) <= 3)
                 {
-                    Vie = true;
+                    vie = 1;
                 }
             }
             else if (grille[x, y] == 0)
             {
                 if (Voisins(x, y) == 3)
                 {
-                    Vie = true;
+                    vie = 1;
                 }
             }
-            return Vie;
+            return vie;
         }
 
-        public static void Print2DArray<T>(T[,] matrix) //methode a supprimer avant envoi
+        public static void Print2DArray(int[,] matrix) //methode a supprimer avant envoi
         {
+            Console.Write("\t");
+            for(int i = 0;i < matrix.GetLength(1); i++)
+            {
+                Console.Write(i + "\t");
+            }
+            Console.WriteLine();
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
+                Console.Write(i + "\t");
                 for (int j = 0; j < matrix.GetLength(1); j++)
                 {
-                    Console.Write(matrix[i, j] + "\t");
+                    if(matrix[i, j] == 1)
+                    {
+                        Console.Write("#" + "\t");
+                    }else if(matrix[i, j] == 0)
+                    {
+                        Console.Write("·" + "\t");
+                    }
+                    else if (matrix[i, j] == 42)
+                    {
+                        Console.Write("-" + "\t");
+                    }
+                    else if (matrix[i, j] == 666)
+                    {
+                        Console.Write("*" + "\t");
+                    }
                 }
                 Console.WriteLine();
             }
