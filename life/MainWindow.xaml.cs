@@ -88,7 +88,7 @@ namespace life
             //on récupère les dimensions de la grille
             int nLignes = grille.GetUpperBound(0) + 1; // GetUpperBound => on récupère l'index du dernier élements de la dimension n (ici 0)
             int nCols = grille.GetUpperBound(1) + 1;
-            int nCase = nLignes * nCols; // nombre de cases total dans la grille
+            int nCase = nLignes * nCols; // nombre de cases total dans la grille => inutile, on va l'enlever
 
             int vivants = 0;
             for (int i = x - 1; i <= x + 1; i++)
@@ -103,7 +103,18 @@ namespace life
                     {
                         j = nLignes + j;
                     }
-                    //to be continued
+                    if(i > nCols - 1) //si i est trop a droite de la grille on lui donne une valeur a gauche
+                    {
+                        i = i - nCols;
+                    }
+                    if(j > nLignes - 1) // pareil pour j
+                    {
+                        j = j - nLignes;
+                    }
+                    if(grille[i,j] == 1 && i!=x && j!=y) //si la case observé n'est pas la case dont on cherches les voisins et que la cellule qu'elle contient est vivante on incrémente le nombre de voisins vivants
+                    {
+                        vivants++;
+                    }
                 }
             }
             return vivants;
