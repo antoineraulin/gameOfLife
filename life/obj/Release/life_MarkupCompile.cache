@@ -4,11 +4,11 @@
 winexe
 C#
 .cs
-D:\Github\Game of life\gameOfLife\life\obj\Debug\
+D:\Github\Game of life\gameOfLife\life\obj\Release\
 life
 none
 false
-DEBUG;TRACE
+TRACE
 D:\Github\Game of life\gameOfLife\life\App.xaml
 2-198042671
 
@@ -16,5 +16,5 @@ D:\Github\Game of life\gameOfLife\life\App.xaml
 13-1609252142
 init.xaml;MainWindow.xaml;
 
-False
+True
 

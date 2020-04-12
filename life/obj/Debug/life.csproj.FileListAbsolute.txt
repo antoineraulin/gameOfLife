@@ -32,3 +32,19 @@ C:\Users\antoi\source\repos\gameOfLife\life\obj\Debug\life.csproj.GenerateResour
 C:\Users\antoi\source\repos\gameOfLife\life\obj\Debug\life.csproj.CoreCompileInputs.cache
 C:\Users\antoi\source\repos\gameOfLife\life\obj\Debug\life.exe
 C:\Users\antoi\source\repos\gameOfLife\life\obj\Debug\life.pdb
+D:\Github\Game of life\gameOfLife\life\bin\Debug\life.exe.config
+D:\Github\Game of life\gameOfLife\life\bin\Debug\life.exe
+D:\Github\Game of life\gameOfLife\life\bin\Debug\life.pdb
+D:\Github\Game of life\gameOfLife\life\obj\Debug\life.csprojAssemblyReference.cache
+D:\Github\Game of life\gameOfLife\life\obj\Debug\init.g.cs
+D:\Github\Game of life\gameOfLife\life\obj\Debug\MainWindow.g.cs
+D:\Github\Game of life\gameOfLife\life\obj\Debug\App.g.cs
+D:\Github\Game of life\gameOfLife\life\obj\Debug\life_MarkupCompile.cache
+D:\Github\Game of life\gameOfLife\life\obj\Debug\life_MarkupCompile.lref
+D:\Github\Game of life\gameOfLife\life\obj\Debug\init.baml
+D:\Github\Game of life\gameOfLife\life\obj\Debug\MainWindow.baml
+D:\Github\Game of life\gameOfLife\life\obj\Debug\life.g.resources
+D:\Github\Game of life\gameOfLife\life\obj\Debug\life.Properties.Resources.resources
+D:\Github\Game of life\gameOfLife\life\obj\Debug\life.csproj.GenerateResource.cache
+D:\Github\Game of life\gameOfLife\life\obj\Debug\life.exe
+D:\Github\Game of life\gameOfLife\life\obj\Debug\life.pdb

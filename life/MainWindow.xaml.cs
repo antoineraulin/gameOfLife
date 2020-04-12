@@ -149,7 +149,7 @@ namespace life
 
         public int Voisins(int x, int y) // renvoi le nombre de voisins vivants autour d'une coordonnée donnée
         {
-            //on récupère les dimensions de la grille
+            // on récupère les dimensions de la grille
             int nLignes = grille.GetUpperBound(0) + 1; // GetUpperBound => on récupère l'index du dernier élements de la dimension n (ici 0)
             int nCols = grille.GetUpperBound(1) + 1;
             //l("voisins -> données", $"x : {x} | y : {y} | nLignes : {nLignes} | nCols : {nCols}");
@@ -161,17 +161,17 @@ namespace life
                     //l("voisins -> s1", $"{i}:{j}");
                     int ti = i; // on copie i et j avant modif dans une mémoire tampon pour pouvoir faire des modifs dessus
                     int tj = j;
-                    if (ti < 0) //si ti est trop en haut de la grille on lui donne une valeur en bas puisque la grille est "ronde"
+                    if (ti < 0) // si ti est trop en haut de la grille on lui donne une valeur en bas puisque la grille est "ronde"
                     {
                         //l("voisins => Modif","m0");
                         ti = nLignes + ti;
                     }
-                    if (tj < 0) //pareil pour tj
+                    if (tj < 0) // pareil pour tj
                     {
                         //l("voisins => Modif", "m1");
                         tj = nCols + tj;
                     }
-                    if(ti > nLignes - 1) //si ti est trop en bas de la grille on lui donne une valeur en haut
+                    if(ti > nLignes - 1) // si ti est trop en bas de la grille on lui donne une valeur en haut
                     {
                         //l("voisins => Modif", "m2");
                         ti = ti - nLignes;
@@ -188,13 +188,13 @@ namespace life
                 }
             }
             //l("##################################################");
-            vivants -= grille[x,y]; // on retire la cellule observé du comptage si elle etait vivante
+            vivants -= grille[x,y]; // on retire la cellule observée du comptage si elle etait vivante
             return vivants;
         }
         
         public int[] VoisinsV2 (int x, int y, int nPop, int rang)
         {
-            //on récupère les dimensions de la grille
+            // on récupère les dimensions de la grille
             int nLignes = grille.GetUpperBound(0) + 1; // GetUpperBound => on récupère l'index du dernier élements de la dimension n (ici 0)
             int nCols = grille.GetUpperBound(1) + 1;
   
@@ -205,15 +205,15 @@ namespace life
                 {
                     int ti = i; // on copie i et j avant modif dans une mémoire tampon pour pouvoir faire des modifs dessus
                     int tj = j;
-                    if (ti < 0) //si ti est trop en haut de la grille on lui donne une valeur en bas puisque la grille est "ronde"
+                    if (ti < 0) // si ti est trop en haut de la grille on lui donne une valeur en bas puisque la grille est "ronde"
                     {
                         ti = nLignes + ti;
                     }
-                    if (tj < 0) //pareil pour tj
+                    if (tj < 0) // pareil pour tj
                     {
                         tj = nCols + tj;
                     }
-                    if(ti > nLignes - 1) //si ti est trop en bas de la grille on lui donne une valeur en haut
+                    if(ti > nLignes - 1) // si ti est trop en bas de la grille on lui donne une valeur en haut
                     {
                         ti = ti - nLignes;
                     }
@@ -221,22 +221,22 @@ namespace life
                     {
                         tj = tj - nCols;
                     }
-                    if (grille[ti, tj] != 0) //si la case est vivante ajoute 1 dans l'index correspondant à sa couleur
+                    if (grille[ti, tj] != 0) // si la case est vivante ajoute 1 dans l'index correspondant à sa couleur
                     {
                         voisins[grille[ti, tj]-1] += 1;
                     }
                 }
             }
-            if (grille[x, y] != 0)
+            if (grille[x, y] != 0) // on retire la cellule observée du comptage si elle était vivante
             {
                 voisins[grille[x, y]-1] -= 1;
             }
             return voisins;
         }
 
-        public int[] PopulationTotale(int nPop)
+        public int[] PopulationTotale(int nPop) // renvoie le nombre de cellules vivantes de chaque population
         {
-            //on récupère les dimensions de la grille
+            // on récupère les dimensions de la grille
             int nLignes = grille.GetUpperBound(0) + 1; // GetUpperBound => on récupère l'index du dernier élements de la dimension n (ici 0)
             int nCols = grille.GetUpperBound(1) + 1;
             int[] pop = new int[nPop];
@@ -253,19 +253,19 @@ namespace life
             return pop;
         }
 
-        public int Evoluer(int x, int y) //renvoie vrai ou faux si la cellule est vivante ou morte au prochain tour
+        public int Evoluer(int x, int y) // renvoie vrai ou faux si la cellule est vivante ou morte au prochain tour
         {
             int vie = 0;
             if (grille[x, y] == 1)
             {
-                if (Voisins(x, y) >= 2 && Voisins(x, y) <= 3) //si la cellule et vivante et à 2 ou 3 voisins elle le reste
+                if (Voisins(x, y) >= 2 && Voisins(x, y) <= 3) // si la cellule et vivante et à 2 ou 3 voisins elle le reste
                 {
                     vie = 1;
                 }
             }
             else if (grille[x, y] == 0)
             {
-                if (Voisins(x, y) == 3) //si la cellule est morte et à exactement 3 voisins elle devient vivante
+                if (Voisins(x, y) == 3) // si la cellule est morte et à exactement 3 voisins elle devient vivante
                 {
                     vie = 1;
                 }
@@ -273,61 +273,92 @@ namespace life
             return vie;
         }
 
-        public int[] EvoluerV2(int x, int y, int nPop)
+        public int[] EvoluerV2(int x, int y, int nPop) // renvoie un tableau comportant (en indice 0) 1 ou 0 si la cellule sera morte ou vivante au prochain tour et (en indice 1) la couleur qu'aura cette cellule
         {
             int[] vie = new int [2];
-            int[] voisins = VoisinsV2(x, y, nPop, 1);
-            int[] voisins2 = VoisinsV2(x, y, nPop, 2);
-            
-            
-            for (int i = 0 ; i < voisins.Length; i++)
+            int[] voisins = VoisinsV2(x, y, nPop, 1); // nombre de cellules voisines au rang 1
+            int[] voisins2 = VoisinsV2(x, y, nPop, 2); // nombre de cellules voisines au rang 2
+
+            if (grille[x, y] != 0) // règles R1b et R2b
             {
-                if (grille[x, y] != 0)
+                if (voisins[grille[x, y]-1] >= 2 && voisins[grille[x, y] - 1] <= 3) // si la cellule est vivante et a 2 ou 3 voisins de sa population alors elle reste vivante
                 {
-                    if(voisins[grille[x, y] - 1] < 2) //sous-population
-                    {
-                        vie[0] = 0;
-                        vie[1] = grille[x, y];
-                    }
-                    if (voisins[grille[x, y] - 1] > 3) //sur-population
-                    {
-                        vie[0] = 0;
-                        vie[1] = grille[x, y];
-                    }
-                    if (voisins[grille[x, y]-1] == 2 || voisins[grille[x, y]-1] == 3) // reste du temps
-                    {
-                        vie[0] = 1;
-                        vie[1] = grille[x, y];
-                    }
+                    vie[0] = 1;
+                    vie[1] = grille[x, y];
                 }
-                else if (grille[x, y] == 0)
+                else // sinon elle meurt
                 {
-
-                    if (voisins[grille[x, y] - 1] == 3) //R3b
-                    {
-                        int voisinsTotal = 0;
-                        for (int j = 0; j < voisins.Length; j++)
-                        {
-                            if(j != grille[x, y] - 1)
-                            {
-                                voisinsTotal += voisins[j];
-                            }
-                        }
-                        if(voisinsTotal == 3)
-                        {
-                            vie[0] = 1;
-                            vie[1] = grille[x, y];
-                        }
-                        else
-                        {
-                            vie[0] = 0;
-                            vie[1] = grille[x, y];
-                        }
-                    }
-
-
+                    vie[0] = 0;
+                    vie[1] = 0;
                 }
             }
+            else // règles R3b et R4b
+            {
+                int nombreVoisins = 0;
+                foreach (int element in voisins) // compte le nombre de cellules voisines au rang 1 (toutes populations confondues)
+                {
+                    nombreVoisins += element;
+                }
+                if (nombreVoisins == 3) // s'il y a 3 celules voisines, regarde si elles sont toutes de la même famille [R3b]
+                {
+                    int famille = -1;
+                    for (int i = 0; i < voisins.Length; i++)
+                    {
+                        if (voisins[i] == 3)
+                        {
+                            famille = i + 1;
+                        }
+                    }
+                    if (famille != -1) // si les 3 cellules sont de la même famille, alors la cellule nait
+                    {
+                        vie[0] = 1;
+                        vie[1] = famille;
+                    }
+                    else // sinon elle reste morte
+                    {
+                        vie[0] = 0;
+                        vie[1] = 0;
+                    }
+                }
+                else if (nombreVoisins == 6) // s'il y a 6 cellules voisines, regarde si elles appartiennent à 2 familles avec 3 cellules par famille [R4b]
+                {
+                    int famille1 = -1;
+                    int famille2 = -1;
+                    for (int i = 0; i < voisins.Length; i++)
+                    {
+                        if (voisins[i] == 3) // si 3 cellules appartiennent à une seule famille
+                        {
+                            if (famille1 == -1) // enregistre la première famille
+                            {
+                                famille1 = i + 1;
+                            }
+                            else // enregistre la deuxième famille
+                            {
+                                famille2 = i + 1;
+                            }
+                        }
+                    }
+                    if (famille1 != -1 && famille2 != -1) // si les 6 cellules voisines sont réparties dans 2 familles avec 3 cellules par familles
+                    {
+                        if (voisins2[famille1 - 1] > voisins2[famille2 - 1]) // s'il y a plus de cellules de la première famille que de la deuxième au rang 2 alors la cellule nait de la couleur de la première famille au tour prochain
+                        {
+                            vie[0] = 1;
+                            vie[1] = famille1;
+                        }
+                        else if (voisins2[famille1 - 1] < voisins2[famille2 - 1]) //s'il y a plus de cellules de la deuxième famille que de la prmière au rang 2 alors la cellule nait de la couleur de la deuxième famille au tour prochain
+                        {
+                            vie[0] = 1;
+                            vie[1] = famille2;
+                        }
+                        else //sinon la cellule reste morte
+                        {
+                            vie[0] = 0;
+                            vie[1] = 0;
+                        }
+                    }
+                }
+            }
+
             return vie;
         }
 
