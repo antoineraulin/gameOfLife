@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:life"
         mc:Ignorable="d"
-        Title="Jeu de la vie" Height="265" Width="290" ResizeMode="NoResize">
+        Title="Jeu de la vie" Height="305" Width="290" ResizeMode="NoResize">
     <Grid>
         <Label Content="Taille de la grille :" Margin="24,12,0,0" HorizontalAlignment="Left" Width="130" Height="43" VerticalAlignment="Top" FontSize="16"/>
         <TextBox x:Name="gridSizeTBx" PreviewTextInput="NumberValidationTextBox" Height="23" Margin="0,16,71,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" FontSize="16" HorizontalAlignment="Right" Width="24"/>
@@ -17,6 +17,10 @@
         <Label Content="Visualisation intermédiaire&#xA;des états futurs :" Margin="24,103,0,0" HorizontalAlignment="Left" Width="227" Height="53" VerticalAlignment="Top" FontSize="11"/>
         <Button x:Name="startB" Content="Démarrer" Margin="30,0,30,30" Height="35" VerticalAlignment="Bottom" Click="startB_Click"/>
         <Button x:Name="visuStateB" Content="OFF" Margin="0,107,30,0" VerticalAlignment="Top" Height="35" Width="65" HorizontalAlignment="Right" Click="visuStateB_Click"/>
-
+        <Label Content="Version du jeu : " Margin="24,156,0,0" HorizontalAlignment="Left" Width="171" Height="43" VerticalAlignment="Top" FontSize="16"/>
+        <Button x:Name="versionB" Content="Classique" Margin="0,155,30,0" VerticalAlignment="Top" Height="35" Width="65" HorizontalAlignment="Right" />
+        <Slider x:Name="slider" Visibility="Hidden" Maximum="14" Margin="30,252,30,0" Height="54" VerticalAlignment="Top" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" AutoToolTipPlacement="BottomRight" Value="1" Minimum="1"/>
+        <Label x:Name="popL" Visibility="Hidden" Content="Nombre de populations:" Margin="24,204,0,0" HorizontalAlignment="Left" Width="206" Height="43" VerticalAlignment="Top" FontSize="16"/>
+        <Label x:Name="sliderL" Visibility="Hidden" Content="{Binding ElementName=slider,Path=Value }" Margin="0,204,30,0" Height="43" VerticalAlignment="Top" FontSize="16" HorizontalAlignment="Right" Width="40"/>
     </Grid>
 </Window>
