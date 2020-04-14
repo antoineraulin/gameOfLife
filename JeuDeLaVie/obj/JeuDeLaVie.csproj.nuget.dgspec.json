@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\antoi\\source\\repos\\JeuDeLaVie\\JeuDeLaVie\\JeuDeLaVie.csproj": {}
+    "C:\\Users\\antoi\\source\\repos\\gameOfLife\\JeuDeLaVie\\JeuDeLaVie.csproj": {}
   },
   "projects": {
-    "C:\\Users\\antoi\\source\\repos\\JeuDeLaVie\\JeuDeLaVie\\JeuDeLaVie.csproj": {
+    "C:\\Users\\antoi\\source\\repos\\gameOfLife\\JeuDeLaVie\\JeuDeLaVie.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\antoi\\source\\repos\\JeuDeLaVie\\JeuDeLaVie\\JeuDeLaVie.csproj",
+        "projectUniqueName": "C:\\Users\\antoi\\source\\repos\\gameOfLife\\JeuDeLaVie\\JeuDeLaVie.csproj",
         "projectName": "JeuDeLaVie",
-        "projectPath": "C:\\Users\\antoi\\source\\repos\\JeuDeLaVie\\JeuDeLaVie\\JeuDeLaVie.csproj",
+        "projectPath": "C:\\Users\\antoi\\source\\repos\\gameOfLife\\JeuDeLaVie\\JeuDeLaVie.csproj",
         "packagesPath": "C:\\Users\\antoi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\antoi\\source\\repos\\JeuDeLaVie\\JeuDeLaVie\\obj\\",
+        "outputPath": "C:\\Users\\antoi\\source\\repos\\gameOfLife\\JeuDeLaVie\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\antoi\\AppData\\Roaming\\NuGet\\NuGet.Config",

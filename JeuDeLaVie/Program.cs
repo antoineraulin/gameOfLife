@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace JeuDeLaVie
 {
@@ -9,10 +10,41 @@ namespace JeuDeLaVie
         static ConsoleColor[] colors = (ConsoleColor[])ConsoleColor.GetValues(typeof(ConsoleColor)); // liste des couleurs possible pour le texte de la console
         static void Main(string[] args)
         {
+            int x, y = 0;
+            // On demande a l'utilisateur les dimensions de la grille souhaitée
+            do
+            {
+                Console.Write("Dimensions de la grille [format : ?x? => ex : 10x12] > ");
+                Regex regex = new Regex("^(.*?)x(.*?)$"); // on utilise une regular expression pour recuperer les infos d'un string selon un format particulier : ici on donne par exemple 10x12 et on obtiens 10 et 12
+                Match match = regex.Match(Console.ReadLine());
+                //l("x", match.Groups[1].Value);
+                //l("y", match.Groups[2].Value);
+                Int32.TryParse(match.Groups[1].Value, out x);
+                Int32.TryParse(match.Groups[2].Value, out y);
+            } while (x < 1 || y < 1);
+            //on demande a l'utilisateur le taux de remplissage:
+            double t = 0.0d;
+            do
+            {
+                Console.Write("Taux de remplissage [0,1 ; 0,9] > ");
+                Double.TryParse(Console.ReadLine().Replace('.',','), out t); // il faut remplacer les . dans le nombre si l'utilisateur en met parce que tryparse ne sait pas convertir un double contenant un point pour la virgule.
+            } while (t == 0.0d || t < 0.1 || t > 0.9);
+
+            //on demande a l'utilisateur si il veut voir les étapes intermédiaires
+            int visuStateChoice = -1;
+            do
+            {
+                Console.WriteLine("Menu :");
+                Console.WriteLine("[0]  Jeu DLV classique sans visualisation intermédiaire des états futurs ");
+                Console.WriteLine("[1]  Jeu DLV classique avec visualisation des états futurs (à naître et à mourir)");
+                Console.Write("Votre choix > ");
+                Int32.TryParse(Console.ReadLine(),out visuStateChoice);
+            } while (visuStateChoice == -1 || visuStateChoice > 1);
+            bool visuState = visuStateChoice == 0 ? false:true;
 
             //il faut coder la recup des infos a l'utilisateur
             l("données", $" x : {x} | y : {y} | t : {t} | visuState : {visuState}");
-            grille = new int[10, 10];
+            grille = new int[x, y];
             InitGrille(x, y, t);
             for (int z = 0; z < 5; z++)
             {
@@ -264,7 +296,7 @@ namespace JeuDeLaVie
 
             if (grille[x, y] != 0) // règles R1b et R2b
             {
-                if (voisins[grille[x, y]-1] >= 2 && voisins[grille[x, y] - 1] <= 3) // si la cellule est vivante et a 2 ou 3 voisins de sa population alors elle reste vivante
+                if (voisins[grille[x, y] - 1] >= 2 && voisins[grille[x, y] - 1] <= 3) // si la cellule est vivante et a 2 ou 3 voisins de sa population alors elle reste vivante
                 {
                     vie[0] = 1;
                     vie[1] = grille[x, y];
