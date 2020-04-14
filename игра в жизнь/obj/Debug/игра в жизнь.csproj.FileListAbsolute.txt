@@ -1,7 +1,0 @@
-C:\Users\antoi\source\repos\игра в жизнь\игра в жизнь\bin\Debug\игра в жизнь.exe.config
-C:\Users\antoi\source\repos\игра в жизнь\игра в жизнь\bin\Debug\игра в жизнь.exe
-C:\Users\antoi\source\repos\игра в жизнь\игра в жизнь\bin\Debug\игра в жизнь.pdb
-C:\Users\antoi\source\repos\игра в жизнь\игра в жизнь\obj\Debug\игра в жизнь.csprojAssemblyReference.cache
-C:\Users\antoi\source\repos\игра в жизнь\игра в жизнь\obj\Debug\игра в жизнь.csproj.CoreCompileInputs.cache
-C:\Users\antoi\source\repos\игра в жизнь\игра в жизнь\obj\Debug\игра в жизнь.exe
-C:\Users\antoi\source\repos\игра в жизнь\игра в жизнь\obj\Debug\игра в жизнь.pdb
