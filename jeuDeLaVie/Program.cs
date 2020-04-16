@@ -2,13 +2,14 @@
 using System;
 using System.Text.RegularExpressions;
 
-
 namespace jeuDeLaVie
 {
     class Program
     {
+        // Zone des variables globales
         static int[,] grille;
-        [STAThread()]
+
+        [STAThread()] // on utilise esilvGUI, esilvGUI est basé sur winForms, et la plateforme winForms nécéssite que tout les controlleurs soient géré par un et un seul Thread, STAThread (STA : Single-Threaded Apartment) permet de forcer le code a n'utiliser qu'un seul thread a l'inverse de la commande MTAThread.
         static void Main()
         {
             object[] param = RecupererParametre();
@@ -19,152 +20,78 @@ namespace jeuDeLaVie
             bool visuState = (bool)param[4];
             int tailleCase = (int)param[5];
 
-            l("données", $" x : {x} | y : {y} | t : {t} | visuState : {visuState} | version : {versionChoice}");
             grille = new int[x, y];
-            if (versionChoice == 0)
+            InitGrille(x, y, t, versionChoice + 1); // on initialise la grille avec soit 1 soit 2 populations puisque choisir la version revient a avoir 0 dans versionChoice pour la version classique et 1 pour la variante.
+            Fenetre gui = new Fenetre(grille, tailleCase, 0, 0, "Jeu de la vie");
+
+            bool stop = false; // condition d'arret de la boucle.
+            int gen = 1; // numéro de la génération en cours
+            int[,] grilleDeComparaison1;                     // grilleDeComparaison1 et 2 sont des historiques des modifitions apportés a grille, afin de voir si la grille est stable sur 3 générations consécutives.
+            int[,] grilleDeComparaison2 = new int[x, y];
+
+            while (!stop)
             {
-                // !! jeu classique
-                InitGrille(x, y, t);
-                Fenetre gui = new Fenetre(grille, tailleCase,0,0,"Jeu de la vie");
-                bool stop = false;
-                int z = 1; // evolution
-                int[,] grilleDeComparaison1;
-                int[,] grilleDeComparaison2 = new int[x, y];
-                while (!stop)
+                grilleDeComparaison1 = grilleDeComparaison2;    // on met a jour l'historique de grille.
+                grilleDeComparaison2 = grille.Clone() as int[,];
+
+                int[,] grilleTemp = grille.Clone() as int[,]; // grilleTemp est la grille sur laquelle on va faire les modifications d'évolution avant de les appliquer sur grille pour eviter les conflits et on ne peut pas modifier grille directement puisqu'on s'appuit sur grille pour determiner l'évolution.
+
+                for (int i = 0; i < x; i++)
                 {
-                    grilleDeComparaison1 = grilleDeComparaison2;
-                    grilleDeComparaison2 = grille.Clone() as int[,];
-                    int[,] tg = grille.Clone() as int[,];
-                    for (int i = 0; i < x; i++)
+                    for (int j = 0; j < y; j++)
                     {
-                        for (int j = 0; j < y; j++)
+                        int[] e = Evoluer(i, j);
+                        if (grille[i, j] == 0 && e[0] == 1)
                         {
-                            int e = Evoluer(i, j);
-                            if (grille[i, j] != e)
-                            {
-                                tg[i, j] = e == 1 ? 42 : 666;
-                            }
-                        }
-                    }
-                    for (int i = 0; i < x; i++)
-                    {
-                        for (int j = 0; j < y; j++)
-                        {
-                            if (tg[i, j] == 42)
-                            {
-                                grille[i, j] = 1;
-                            }
-                            else if (tg[i, j] == 666)
-                            {
-                                grille[i, j] = 0;
-                            }
-                        }
-                    }
-                    if (visuState)
-                    {
-                        l("Futur " + z);
-                        AfficherMatrice(tg);
-                    }
+                            grilleTemp[i, j] = e[1] == 1 ? 42 : 142;
 
-                    l("après Evolution " + z);
-                    AfficherMatrice(grille);
-                    if (ComparerGrilles(grille, grilleDeComparaison1, grilleDeComparaison2))
-                    {
-                        stop = true;
+                        }
+                        else if (grille[i, j] != 0 && e[0] == 0)
+                        {
+                            grilleTemp[i, j] = e[1] == 1 ? 666 : 1666;
+                        }
                     }
-                    gui.RafraichirTout();
-                    int[] pop = PopulationTotale(grille);
-                    gui.changerMessage($"Génération {z}. Actuellement {pop[0]} cellules vivantes");
-                    System.Threading.Thread.Sleep(200);
-                    z++;
                 }
-                gui.changerMessage("Terminé");
-            }
-            else
-            {
-                // !! jeu variant
-                InitGrilleV2(x, y, t);
-                Fenetre gui = new Fenetre(grille, tailleCase, 0, 0, "Jeu de la vie");
-                bool stop = false;
-                int z = 1; // evolution
-                int[,] grilleDeComparaison1;
-                int[,] grilleDeComparaison2 = new int[x, y];
-                while (!stop)
+                for (int i = 0; i < x; i++)
                 {
-                    grilleDeComparaison1 = grilleDeComparaison2;
-                    grilleDeComparaison2 = grille.Clone() as int[,];
-                    int[,] tg = grille.Clone() as int[,];
-                    for (int i = 0; i < x; i++)
+                    for (int j = 0; j < y; j++)
                     {
-                        for (int j = 0; j < y; j++)
+                        if (grilleTemp[i, j] == 42)
                         {
-                            int[] e = EvoluerV2(i, j);
-                            if (grille[i, j] == 0 && e[0] == 1)
-                            {
-                                if (e[1] == 1)
-                                {
-                                    tg[i, j] = 42;
-                                }
-                                else
-                                {
-                                    tg[i, j] = 142;
-                                }
-                            }
-                            else if (grille[i, j] != 0 && e[0] == 0)
-                            {
-                                if (e[1] == 1)
-                                {
-                                    tg[i, j] = 666;
-                                }
-                                else
-                                {
-                                    tg[i, j] = 1666;
-                                }
-                            }
-                            //grille[i, j] = e;
+                            grille[i, j] = 1;
+                        }
+                        else if (grilleTemp[i, j] == 142)
+                        {
+                            grille[i, j] = 2;
+                        }
+                        else if (grilleTemp[i, j] == 666 || grilleTemp[i, j] == 1666)
+                        {
+                            grille[i, j] = 0;
                         }
                     }
-                    for (int i = 0; i < x; i++)
-                    {
-                        for (int j = 0; j < y; j++)
-                        {
-                            if (tg[i, j] == 42)
-                            {
-                                grille[i, j] = 1;
-                            }
-                            else if (tg[i, j] == 142)
-                            {
-                                grille[i, j] = 2;
-                            }
-                            else if (tg[i, j] == 666 || tg[i, j] == 1666)
-                            {
-                                grille[i, j] = 0;
-                            }
-                        }
-                    }
-                    if (visuState)
-                    {
-                        l("Futur " + z);
-                        AfficherMatrice(tg);
-                    }
-
-                    l("après Evolution " + z);
-                    AfficherMatrice(grille);
-                    if (ComparerGrilles(grille, grilleDeComparaison1, grilleDeComparaison2)){
-                        stop = true;
-                    }
-                    gui.RafraichirTout();
-                    int[] pop = PopulationTotale(grille);
-                    gui.changerMessage($"Génération {z}. Actuellement {pop[0]} cellules vivantes de la population noire et {pop[1]} pour les verts");
-                    System.Threading.Thread.Sleep(200);
-                    z++;
                 }
-                gui.changerMessage("Terminé");
-            }
+                if (visuState)
+                {
+                    Console.WriteLine("Futur " + gen);
+                    AfficherMatrice(grilleTemp);
+                }
 
+                Console.WriteLine("après Evolution " + gen);
+                AfficherMatrice(grille);
+                if (ComparerGrilles(grille, grilleDeComparaison1, grilleDeComparaison2))
+                {
+                    stop = true;
+                }
+                gui.RafraichirTout();
+                int[] pop = PopulationTotale(grille);
+                gui.changerMessage($"Génération {gen}. Actuellement {pop[0]} cellules vivantes" + (pop.Length > 1 ? $"de la population noire et {pop[1]} pour les verts" : ""));
+                System.Threading.Thread.Sleep(500);
+                gen++;
+
+            }
+            gui.changerMessage("Terminé");
             Console.ReadKey();
         }
-
         static object[] RecupererParametre()
         {
             object[] res = new object[6];
@@ -175,8 +102,6 @@ namespace jeuDeLaVie
                 Console.Write("Dimensions de la grille [format : ?x? => ex : 10x12] > ");
                 Regex regex = new Regex("^(.*?)x(.*?)$"); // on utilise une regular expression pour recuperer les infos d'un string selon un format particulier : ici on donne par exemple 10x12 et on obtiens 10 et 12
                 Match match = regex.Match(Console.ReadLine());
-                //l("x", match.Groups[1].Value);
-                //l("y", match.Groups[2].Value);
                 int.TryParse(match.Groups[1].Value, out x);
                 int.TryParse(match.Groups[2].Value, out y);
             } while (x < 1 || y < 1);
@@ -195,7 +120,7 @@ namespace jeuDeLaVie
             int tailleCase;
             do
             {
-                Console.Write("Taux de remplissage [0,1 ; 0,9] > ");
+                Console.Write("Taille des cases du GUI (> 1) > ");
                 int.TryParse(Console.ReadLine(), out tailleCase);
             } while (tailleCase < 1);
             res[5] = tailleCase;
@@ -225,146 +150,46 @@ namespace jeuDeLaVie
             res[4] = visuState;
             return res;
         }
-
-        static bool ComparerGrilles(int[,] grille1, int[,] grilleC1,int[,] grilleC2)
+        static bool ComparerGrilles(int[,] grille1, int[,] grilleC1, int[,] grilleC2)
         {
             int[] pop = PopulationTotale(grille1);
             int[] popC1 = PopulationTotale(grilleC1);
             int[] popC2 = PopulationTotale(grilleC2);
             bool res = false;
-            if(pop[0] == popC1[0] && pop[1] == popC1[1] && pop[0] == popC2[0] && pop[1] == popC2[1])
+            if (pop[0] == popC1[0] && pop[1] == popC1[1] && pop[0] == popC2[0] && pop[1] == popC2[1])
             {
                 res = true;
             }
             return res;
         }
-
-        //SECTION ETAPE 1
-        static void InitGrille(int x, int y, double t)
+        static void InitGrille(int x, int y, double t, int nPop)
         {
             int nCase = x * y; // nombre de cases total dans la grille
-            l("nCase", nCase.ToString());
             int n = (int)(t * nCase); // nombre de case a remplir pour atteindre le taux spécifié
-            l("n", n.ToString());
-            for (int i = 0; i < nCase; i++)
-            {
-                // on convertit i en position xy pour pouvoir savoir où il est dans la grille
-                int iLigne = i / y;
-                int iCol = i % y;
-
-                grille[iLigne, iCol] = i < n ? 1 : 0; // si i est dans l'interval [0,n[ alors la case doit contenir un 1 parce qu'on est encore dans le cadre du taux fixé, sinon on met un 0.
-            }
-
-            //maintenant que la grille est remplit au taux fixé on la mélange
-            AfficherMatrice(grille);
-            MelangerGrille();
-            l("après mélange");
-            AfficherMatrice(grille);
-        }
-
-        static int Voisins(int x, int y) // renvoi le nombre de voisins vivants autour d'une coordonnée donnée
-        {
-            //on récupère les dimensions de la grille
-            int nLignes = grille.GetUpperBound(0) + 1; // GetUpperBound => on récupère l'index du dernier élements de la dimension n (ici 0)
-            int nCols = grille.GetUpperBound(1) + 1;
-            //l("voisins -> données", $"x : {x} | y : {y} | nLignes : {nLignes} | nCols : {nCols}");
-            int vivants = 0;
-            for (int i = x - 1; i <= x + 1; i++)
-            {
-                for (int j = y - 1; j <= y + 1; j++)
-                {
-                    //l("voisins -> s1", $"{i}:{j}");
-                    int ti = i; // on copie i et j avant modif dans une mémoire tampon pour pouvoir faire des modifs dessus
-                    int tj = j;
-                    if (ti < 0) //si ti est trop en haut de la grille on lui donne une valeur en bas puisque la grille est "ronde"
-                    {
-                        //l("voisins => Modif","m0");
-                        ti = nLignes + ti;
-                    }
-                    if (tj < 0) //pareil pour tj
-                    {
-                        //l("voisins => Modif", "m1");
-                        tj = nCols + tj;
-                    }
-                    if (ti > nLignes - 1) //si ti est trop en bas de la grille on lui donne une valeur en haut
-                    {
-                        //l("voisins => Modif", "m2");
-                        ti -= nLignes;
-                    }
-                    if (tj > nCols - 1) // pareil pour tj
-                    {
-                        //l("voisins => Modif", "m3");
-                        tj -= nCols;
-                    }
-                    //l("voisins -> s2", $"{ti}:{tj}");
-                    //l("voisins -> v", grille[ti, tj].ToString());
-                    vivants += grille[ti, tj];
-                    //l("#########################");
-                }
-            }
-            //l("##################################################");
-            vivants -= grille[x, y]; // on retire la cellule observé du comptage si elle etait vivante
-            return vivants;
-        }
-
-        static int Evoluer(int x, int y) //renvoie vrai ou faux si la cellule est vivante ou morte au prochain tour
-        {
-            int vie = 0;
-            if (grille[x, y] == 1)
-            {
-                if (Voisins(x, y) >= 2 && Voisins(x, y) <= 3) //si la cellule et vivante et à 2 ou 3 voisins elle le reste
-                {
-                    vie = 1;
-                }
-            }
-            else if (grille[x, y] == 0)
-            {
-                if (Voisins(x, y) == 3) //si la cellule est morte et à exactement 3 voisins elle devient vivante
-                {
-                    vie = 1;
-                }
-            }
-            return vie;
-        }
-
-
-        // !SECTION
-
-        // SECTION ETAPE 2
-        // TODO modifier le code de l'étape deux pour que ca ne prenne en compte que 2 pops
-        static void InitGrilleV2(int x, int y, double t)
-        {
-            int nCase = x * y; // nombre de cases total dans la grille
-            l("nCase", nCase.ToString());
-            int n = (int)(t * nCase); // nombre de case a remplir pour atteindre le taux spécifié
-            l("n", n.ToString());
             int currentColor = 1; //couleur de la cellule, on commence a 1 parce que la couleur 0 est le noir et comme le fond de la console est noir ce sera illisible, de plus dans notre système le chiffre zero est reservé pour les cellules mortes ou inexistantes
             for (int i = 0; i < nCase; i++)
             {
                 // on convertit i en position xy pour pouvoir savoir où il est dans la grille
                 int iLigne = i / y;
                 int iCol = i % y;
-                if (currentColor == 3)
+
+                if (currentColor == nPop + 1) //Si on depasse le nombre de population en terme de couleur on revient a 1.
                 {
                     currentColor = 1;
                 }
-                grille[iLigne, iCol] = i < n ? currentColor : 0; // si i est dans l'interval [0,n[ alors la case doit contenir un 1 parce qu'on est encore dans le cadre du taux fixé, sinon on met un 0.
+
+                grille[iLigne, iCol] = i < n ? currentColor : 0; // si i est dans l'interval [0,n[ alors la case doit contenir la valeur de currentColor (si on est en mode classique ce sera forcément 1, sinon ce sera soit 1 soit 2) parce qu'on est encore dans le cadre du taux fixé, sinon on met un 0.
                 currentColor++;
             }
-
             //maintenant que la grille est remplit au taux fixé on la mélange
-            AfficherMatrice(grille);
             MelangerGrille();
-            l("après mélange");
             AfficherMatrice(grille);
         }
-
-        static int[] VoisinsV2(int x, int y, int rang)
+        static int[] Voisins(int x, int y, int rang) // renvoi le nombre de voisins vivants autour d'une coordonnée donnée sous forme d'un tableau comprenant le numéro de la population et le nombre de voisins vivants de cette populations autour de la cellule observée.
         {
             //on récupère les dimensions de la grille
             int nLignes = grille.GetUpperBound(0) + 1; // GetUpperBound => on récupère l'index du dernier élements de la dimension n (ici 0)
             int nCols = grille.GetUpperBound(1) + 1;
-
             int[] voisins = new int[2];
             for (int i = x - (1 * rang); i <= x + (1 * rang); i++)
             {
@@ -394,13 +219,12 @@ namespace jeuDeLaVie
                     }
                 }
             }
-            if (grille[x, y] != 0)
+            if (grille[x, y] != 0) // on retire la cellule observé du comptage si elle etait vivante
             {
                 voisins[grille[x, y] - 1] -= 1;
             }
             return voisins;
         }
-
         static int[] PopulationTotale(int[,] g) // compte le nombre de cellules vivantes de chaque population
         {
             // on récupère les dimensions de la grille
@@ -419,12 +243,11 @@ namespace jeuDeLaVie
             }
             return pop;
         }
-
-        static int[] EvoluerV2(int x, int y)
+        static int[] Evoluer(int x, int y)
         {
             int[] vie = new int[2];
-            int[] voisins = VoisinsV2(x, y, 1);
-            int[] voisins2 = VoisinsV2(x, y, 2);
+            int[] voisins = Voisins(x, y, 1);
+            int[] voisins2 = Voisins(x, y, 2);
 
             if (grille[x, y] != 0) // règles R1b et R2b
             {
@@ -521,75 +344,52 @@ namespace jeuDeLaVie
             }
             return vie;
         }
-
-        //!SECTION
-
-        static void AfficherMatrice(int[,] mat) //methode a supprimer avant envoi
+        static void AfficherMatrice(int[,] mat)
         {
             Console.Write("\t");
             for (int i = 0; i < mat.GetLength(1); i++)
             {
-                Console.ForegroundColor = ConsoleColor.White;
                 Console.Write(i + "\t");
             }
             Console.WriteLine();
             for (int i = 0; i < mat.GetLength(0); i++)
             {
-                Console.ForegroundColor = ConsoleColor.White;
                 Console.Write(i + "\t");
                 for (int j = 0; j < mat.GetLength(1); j++)
                 {
-                    if (mat[i, j] == 1)
+                    Console.ForegroundColor = ConsoleColor.White;
+                    switch (mat[i, j])
                     {
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.Write("#" + "\t");
-                    }
-                    if (mat[i, j] == 2)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.Write("#" + "\t");
-                        Console.ForegroundColor = ConsoleColor.White;
-                    }
-                    else if (mat[i, j] == 0)
-                    {
-                        Console.Write("·" + "\t");
-                    }
-                    else if (mat[i, j] == 42)
-                    {
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.Write("-" + "\t");
-                    }
-                    else if (mat[i, j] == 142)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.Write("-" + "\t");
-                        Console.ForegroundColor = ConsoleColor.White;
-                    }
-                    else if (mat[i, j] == 666)
-                    {
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.Write("*" + "\t");
-                    }
-                    else if (mat[i, j] == 1666)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.Write("*" + "\t");
-                        Console.ForegroundColor = ConsoleColor.White;
+                        case 1:
+                            Console.Write("#" + "\t");
+                            break;
+                        case 2:
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.Write("#" + "\t");
+                            break;
+                        case 0:
+                            Console.Write("·" + "\t");
+                            break;
+                        case 42:
+                            Console.Write("-" + "\t");
+                            break;
+                        case 142:
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.Write("-" + "\t");
+                            break;
+                        case 666:
+                            Console.Write("*" + "\t");
+                            break;
+                        case 1666:
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.Write("*" + "\t");
+                            break;
                     }
                 }
                 Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.White;
             }
         }
-
-        static void l(string data)
-        {
-            Console.WriteLine(data);
-        }
-        static void l(string tag, string data)
-        {
-            Console.WriteLine("[" + tag + "] " + data);
-        }
-
         static void MelangerGrille()
         {
             //on récupère les dimensions de la grille
@@ -614,6 +414,5 @@ namespace jeuDeLaVie
                 grille[jLigne, jCol] = temp;
             }
         }
-
     }
 }
