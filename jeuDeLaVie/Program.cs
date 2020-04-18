@@ -162,10 +162,10 @@ namespace jeuDeLaVie
             }
             return res;
         }
-        static void InitGrille(int x, int y, double t, int nPop)
+        static void InitGrille(int x, int y, double taux, int nPop)
         {
             int nCase = x * y; // nombre de cases total dans la grille
-            int n = (int)(t * nCase); // nombre de case a remplir pour atteindre le taux spécifié
+            int n = (int)(taux * nCase); // nombre de case a remplir pour atteindre le taux spécifié
             int currentColor = 1; //couleur de la cellule, on commence a 1 parce que la couleur 0 est le noir et comme le fond de la console est noir ce sera illisible, de plus dans notre système le chiffre zero est reservé pour les cellules mortes ou inexistantes
             for (int i = 0; i < nCase; i++)
             {
@@ -413,6 +413,34 @@ namespace jeuDeLaVie
                 grille[iLigne, iCol] = grille[jLigne, jCol];
                 grille[jLigne, jCol] = temp;
             }
+        }
+        static void CreationMalades(int x, int y, float taux, float tauxMalades, int nPop)
+        {
+            int nCase = x * y;
+            int n = (int)(taux * nCase);
+            int nMalades = (int)(tauxMalades * n);
+            for (int i = 0; i < nMalades; i++)
+            {
+                int iLigne = i / y;
+                int iCol = i % y;
+                grille[iLigne, iCol] = 2;
+            }
+        }
+        /* on choisit d'utiliser les nombres suivants pour caractériser la santé des cellules
+            0 : morte
+            1 : non malade non immunisée
+            2 : malade stade 0
+            3 : malade stade 1
+            4 : malade stade 2
+            5 : malade stade 3
+            6 : malade stade 4
+            7 : non malade immunisée
+        */
+        static int EvolutionCorona(int x, int y)
+        {
+            int sante = 0;
+            
+            return sante;
         }
     }
 }
