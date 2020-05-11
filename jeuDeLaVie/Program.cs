@@ -12,13 +12,13 @@ namespace jeuDeLaVie
         [STAThread()] // on utilise esilvGUI, esilvGUI est basé sur winForms, et la plateforme winForms nécéssite que tout les controlleurs soient géré par un et un seul Thread, STAThread (STA : Single-Threaded Apartment) permet de forcer le code a n'utiliser qu'un seul thread a l'inverse de la commande MTAThread.
         static void Main()
         {
-            object[] param = RecupererParametre();
-            int x = (int)param[0];
-            int y = (int)param[1];
-            double t = (double)param[2];
-            int versionChoice = (int)param[3];
-            bool visuState = (bool)param[4];
-            int tailleCase = (int)param[5];
+            dynamic[] param = RecupererParametre();
+            int x = param[0];
+            int y = param[1];
+            double t = param[2];
+            int versionChoice = param[3];
+            bool visuState = param[4];
+            int tailleCase = param[5];
 
             grille = new int[x, y];
             InitGrille(x, y, t, versionChoice + 1); // on initialise la grille avec soit 1 soit 2 populations puisque choisir la version revient a avoir 0 dans versionChoice pour la version classique et 1 pour la variante.
@@ -92,9 +92,9 @@ namespace jeuDeLaVie
             gui.changerMessage("Terminé");
             Console.ReadKey();
         }
-        static object[] RecupererParametre()
+        static dynamic[] RecupererParametre()
         {
-            object[] res = new object[6];
+            dynamic[] res = new object[6];
             int x, y;
             // On demande a l'utilisateur les dimensions de la grille souhaitée
             do
@@ -414,33 +414,6 @@ namespace jeuDeLaVie
                 grille[jLigne, jCol] = temp;
             }
         }
-        static void CreationMalades(int x, int y, float taux, float tauxMalades, int nPop)
-        {
-            int nCase = x * y;
-            int n = (int)(taux * nCase);
-            int nMalades = (int)(tauxMalades * n);
-            for (int i = 0; i < nMalades; i++)
-            {
-                int iLigne = i / y;
-                int iCol = i % y;
-                grille[iLigne, iCol] = 2;
-            }
-        }
-        /* on choisit d'utiliser les nombres suivants pour caractériser la santé des cellules
-            0 : morte
-            1 : non malade non immunisée
-            2 : malade stade 0
-            3 : malade stade 1
-            4 : malade stade 2
-            5 : malade stade 3
-            6 : malade stade 4
-            7 : non malade immunisée
-        */
-        static int EvolutionCorona(int x, int y)
-        {
-            int sante = 0;
-            
-            return sante;
-        }
+
     }
 }
