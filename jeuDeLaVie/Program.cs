@@ -72,142 +72,141 @@ namespace jeuDeLaVie
         static void Main()
         {
             //on demande à l'utilisateur quelle version du jeu il veut utiliser
-            int version = -1;
-            do
-            {
-                Console.WriteLine("Menu Version :");
-                Console.WriteLine("[0]  Jeu De La Vie");
-                Console.WriteLine("[1]  Version Covid");
-                Console.Write("Votre choix > ");
-                int.TryParse(Console.ReadLine(), out version);
-            } while (version == -1 || version > 1);
-
-            if (version == 0)
-            {
-                //version jeu de la vie
-                ParamJeuDeLaVie param = RecupererParametreJDLV();
-
-                grille = new int[param.x, param.y];
-                InitGrilleJDLV(param.x, param.y, param.tauxRemplissage, param.versionChoice + 1); // on initialise la grille avec soit 1 soit 2 populations puisque choisir la version revient a avoir 0 dans versionChoice pour la version classique et 1 pour la variante.
-                gui = new Fenetre(grille, param.tailleCase, 0, 0, "Jeu de la vie");
-
-                bool stop = false; // condition d'arret de la boucle.
-                int[,] grilleDeComparaison1;                     // grilleDeComparaison1 et 2 sont des historiques des modifitions apportés a grille, afin de voir si la grille est stable sur 3 générations consécutives.
-                int[,] grilleDeComparaison2 = new int[param.x, param.y];
-
-                while (!stop)
-                {
-                    grilleDeComparaison1 = grilleDeComparaison2;    // on met a jour l'historique de grille.
-                    grilleDeComparaison2 = grille.Clone() as int[,];
-
-                    grilleTemp = grille.Clone() as int[,]; // grilleTemp est la grille sur laquelle on va faire les modifications d'évolution avant de les appliquer sur grille pour eviter les conflits et on ne peut pas modifier grille directement puisqu'on s'appuit sur grille pour determiner l'évolution.
-
-                    for (int i = 0; i < param.x; i++)
+        
+                    int version = -1;
+                    do
                     {
-                        for (int j = 0; j < param.y; j++)
-                        {
-                            int[] e = EvoluerJDLV(i, j);
-                            if (grille[i, j] == 0 && e[0] == 1)
-                            {
-                                grilleTemp[i, j] = e[1] == 1 ? 42 : 142;
+                        Console.WriteLine("Menu Version :");
+                        Console.WriteLine("[0]  Jeu De La Vie");
+                        Console.WriteLine("[1]  Version Covid");
+                        Console.Write("Votre choix > ");
+                        int.TryParse(Console.ReadLine(), out version);
+                    } while (version == -1 || version > 1);
+                    
+                    if (version == 0)
+                    {
+                        //version jeu de la vie
+                        ParamJeuDeLaVie param = RecupererParametreJDLV();
 
-                            }
-                            else if (grille[i, j] != 0 && e[0] == 0)
+                        grille = new int[param.x, param.y];
+                        InitGrilleJDLV(param.x, param.y, param.tauxRemplissage, param.versionChoice + 1); // on initialise la grille avec soit 1 soit 2 populations puisque choisir la version revient a avoir 0 dans versionChoice pour la version classique et 1 pour la variante.
+                        gui = new Fenetre(grille, param.tailleCase, 0, 0, "Jeu de la vie");
+
+                        bool stop = false; // condition d'arret de la boucle.
+                        int[,] grilleDeComparaison1;                     // grilleDeComparaison1 et 2 sont des historiques des modifitions apportés a grille, afin de voir si la grille est stable sur 3 générations consécutives.
+                        int[,] grilleDeComparaison2 = new int[param.x, param.y];
+
+                        while (!stop)
+                        {
+                            grilleDeComparaison1 = grilleDeComparaison2;    // on met a jour l'historique de grille.
+                            grilleDeComparaison2 = grille.Clone() as int[,];
+
+                            grilleTemp = grille.Clone() as int[,]; // grilleTemp est la grille sur laquelle on va faire les modifications d'évolution avant de les appliquer sur grille pour eviter les conflits et on ne peut pas modifier grille directement puisqu'on s'appuit sur grille pour determiner l'évolution.
+
+                            for (int i = 0; i < param.x; i++)
                             {
-                                grilleTemp[i, j] = e[1] == 1 ? 666 : 1666;
+                                for (int j = 0; j < param.y; j++)
+                                {
+                                    int[] e = EvoluerJDLV(i, j);
+                                    if (grille[i, j] == 0 && e[0] == 1)
+                                    {
+                                        grilleTemp[i, j] = e[1] == 1 ? 42 : 142;
+
+                                    }
+                                    else if (grille[i, j] != 0 && e[0] == 0)
+                                    {
+                                        grilleTemp[i, j] = e[1] == 1 ? 666 : 1666;
+                                    }
+                                }
+                            }
+                            for (int i = 0; i < param.x; i++)
+                            {
+                                for (int j = 0; j < param.y; j++)
+                                {
+                                    if (grilleTemp[i, j] == 42)
+                                    {
+                                        grille[i, j] = 1;
+                                    }
+                                    else if (grilleTemp[i, j] == 142)
+                                    {
+                                        grille[i, j] = 2;
+                                    }
+                                    else if (grilleTemp[i, j] == 666 || grilleTemp[i, j] == 1666)
+                                    {
+                                        grille[i, j] = 0;
+                                    }
+                                }
+                            }
+                            if (param.visuState)
+                            {
+                                Console.WriteLine("Futur " + gen);
+                                AfficherMatrice(grilleTemp);
+                            }
+
+                            Console.WriteLine("après Evolution " + gen);
+                            if (param.affichageConsole)
+                            {
+                                AfficherMatrice(grille);
+                            }
+                            if (ComparerGrilles(grille, grilleDeComparaison1, grilleDeComparaison2))
+                            {
+                                stop = true;
+                            }
+                            gui.RafraichirTout();
+                            int[] pop = PopulationTotale(grille);
+                            gui.changerMessage($"Génération {gen}. Actuellement {pop[0]} cellules vivantes" + (pop.Length > 1 ? $"de la population noire et {pop[1]} pour les verts" : ""));
+                            System.Threading.Thread.Sleep(100);
+                            gen++;
+
+                        }
+                        gui.changerMessage("Terminé");
+                    }
+                    else
+                    {
+                        //version covid
+                        ParamCovid param = RecupererParametreCovid();
+
+                        InitGrilleCovid(param.x, param.y, param.nombrePatientsZero, param.tauxConfinement);
+                        gui = new Fenetre(grille, param.tailleCase, 0, 0, "Jeu de la vie - COVID");
+                        Console.WriteLine("Appuyez sur `Entrée` pour démarrer la simulation.");
+                        Console.ReadKey();
+                        bool stop = false;
+                        while (!stop)
+                        {
+
+                            grilleTemp = grille.Clone() as int[,]; // grilleTemp est la grille sur laquelle on va faire les modifications d'évolution avant de les appliquer sur grille pour eviter les conflits et on ne peut pas modifier grille directement puisqu'on s'appuit sur grille pour determiner l'évolution.
+
+                            for (int i = 0; i < param.x; i++)
+                            {
+                                for (int j = 0; j < param.y; j++)
+                                {
+                                    EvoluerCovid(i, j, param.tauxContamination, param.poidsStat, param.tauxGuerison);
+                                }
+                            }
+                            for (int i = 0; i < param.x; i++)
+                            {
+                                for (int j = 0; j < param.y; j++)
+                                {
+                                    grille[i, j] = grilleTemp[i, j];
+                                }
+                            }
+                            gui.RafraichirTout();
+                            int[] pop = Population();
+                            gui.changerMessage("Génération " + gen + " | sains non-immunisés : " + pop[0] + " | sains immunisés : " + pop[6] + " | stade 0 : " + pop[1] + " | stade 1 : " + pop[2] + " | stade 2 : " + pop[3] + " | stade 3 : " + pop[4] + " | morts : " + pop[5] + " | confinés : " + pop[7]);
+                            System.Threading.Thread.Sleep(100);
+                            gen++;
+                            if (pop[1] == 0 && pop[2] == 0 && pop[3] == 0 && pop[4] == 0)
+                            {
+                                //il n'y a plus de malade, on a atteint la stabilité
+                                gui.changerMessage("Terminé | Gen " + gen + " | sains non-immunisés : " + pop[0] + " | sains immunisés : " + pop[6] + " | stade 0 : " + pop[1] + " | stade 1 : " + pop[2] + " | stade 2 : " + pop[3] + " | stade 3 : " + pop[4] + " | morts : " + pop[5] + " | confinés : " + pop[7]);
+                                stop = true;
                             }
                         }
                     }
-                    for (int i = 0; i < param.x; i++)
-                    {
-                        for (int j = 0; j < param.y; j++)
-                        {
-                            if (grilleTemp[i, j] == 42)
-                            {
-                                grille[i, j] = 1;
-                            }
-                            else if (grilleTemp[i, j] == 142)
-                            {
-                                grille[i, j] = 2;
-                            }
-                            else if (grilleTemp[i, j] == 666 || grilleTemp[i, j] == 1666)
-                            {
-                                grille[i, j] = 0;
-                            }
-                        }
-                    }
-                    if (param.visuState)
-                    {
-                        Console.WriteLine("Futur " + gen);
-                        AfficherMatrice(grilleTemp);
-                    }
 
-                    Console.WriteLine("après Evolution " + gen);
-                    if(param.affichageConsole)
-                    {
-                        AfficherMatrice(grille);
-                    }
-                    if (ComparerGrilles(grille, grilleDeComparaison1, grilleDeComparaison2))
-                    {
-                        stop = true;
-                    }
-                    gui.RafraichirTout();
-                    int[] pop = PopulationTotale(grille);
-                    gui.changerMessage($"Génération {gen}. Actuellement {pop[0]} cellules vivantes" + (pop.Length > 1 ? $"de la population noire et {pop[1]} pour les verts" : ""));
-                    System.Threading.Thread.Sleep(100);
-                    gen++;
-
-                }
-                gui.changerMessage("Terminé");
-            }
-            else
-            {
-                //version covid
-                ParamCovid param = RecupererParametreCovid();
-
-                InitGrilleCovid(param.x, param.y, param.nombrePatientsZero, param.tauxConfinement);
-                gui = new Fenetre(grille, param.tailleCase, 0, 0, "Jeu de la vie - COVID");
-                AfficherMatrice(grille);
-                Console.WriteLine("Appuyez sur `Entrée` pour démarrer la simulation.");
-                Console.ReadKey();
-                bool stop = false;
-                while (!stop)
-                {
-
-                    grilleTemp = grille.Clone() as int[,]; // grilleTemp est la grille sur laquelle on va faire les modifications d'évolution avant de les appliquer sur grille pour eviter les conflits et on ne peut pas modifier grille directement puisqu'on s'appuit sur grille pour determiner l'évolution.
-
-                    for (int i = 0; i < param.x; i++)
-                    {
-                        for (int j = 0; j < param.y; j++)
-                        {
-                            EvoluerCovid(i, j, param.tauxContamination, param.poidsStat, param.tauxGuerison);
-                        }
-                    }
-                    for (int i = 0; i < param.x; i++)
-                    {
-                        for (int j = 0; j < param.y; j++)
-                        {
-                            grille[i, j] = grilleTemp[i, j];
-                        }
-                    }
-                    //Console.WriteLine("apres");
-                    //AfficherMatrice(grille);
-                    gui.RafraichirTout();
-                    int[] pop = Population();
-                    gui.changerMessage("Génération " + gen + " | sains non-immunisés : " + pop[0] + " | sains immunisés : " + pop[6] + " | stade 0 : " + pop[1] + " | stade 1 : " + pop[2] + " | stade 2 : " + pop[3] + " | stade 3 : " + pop[4] + " | morts : " + pop[5] + " | confinés : " + pop[7]);
-                    System.Threading.Thread.Sleep(100);
-                    //Console.ReadKey();
-                    gen++;
-                    if (pop[1] == 0 && pop[2] == 0 && pop[3] == 0 && pop[4] == 0)
-                    {
-                        //il n'y a plus de malade, on a atteint la stabilité
-                        gui.changerMessage("Terminé | Gen " + gen + " | sains non-immunisés : " + pop[0] + " | sains immunisés : " + pop[6] + " | stade 0 : " + pop[1] + " | stade 1 : " + pop[2] + " | stade 2 : " + pop[3] + " | stade 3 : " + pop[4] + " | morts : " + pop[5] + " | confinés : " + pop[7]);
-                        stop = true;
-                    }
-                }
-            }
-           
-            Console.ReadKey();
+                    
+                    Console.ReadKey();
+            
         }
         static ParamJeuDeLaVie RecupererParametreJDLV()
         {
@@ -315,11 +314,11 @@ namespace jeuDeLaVie
                 }
             } while (advancedChoice == -1);
 
-            double tauxContamination = 2.5;
+            double tauxContamination = 0.3;
             double[] poidsStat = { 0.6, 0.2, 0.1, 0.02 };
             double tauxConfinement = versionChoice == 0.0 ? 0.0 : 0.8;
             int tailleCase = 0;
-            double tauxGuerison = 0.3;
+            double tauxGuerison = 0.2;
             int nombrePatientsZero = 1;
             stadeDeconfinement = -1;
             if (advancedChoice == 1)
@@ -330,18 +329,18 @@ namespace jeuDeLaVie
                 double tauxContaminationAdvanced;
                 do
                 {
-                    Console.Write("Taux de contamination [par default : 2,5] > ");
+                    Console.Write("Taux de contamination [par default : 0,3] > ");
                     string c = Console.ReadLine();
                     if (c != "")
                     {
                         if (!double.TryParse(c.Replace(".", ","), out tauxContaminationAdvanced))
                         {
-                            tauxContaminationAdvanced = 2.5;
+                            tauxContaminationAdvanced = 0.3;
                         }
                     }
                     else
                     {
-                        tauxContaminationAdvanced = 2.5;
+                        tauxContaminationAdvanced = 0.3;
                     }
 
                 } while (tauxContaminationAdvanced == 0.0d || tauxContaminationAdvanced < 0);
@@ -422,7 +421,7 @@ namespace jeuDeLaVie
                 double tauxGuerisonAdvanced;
                 do
                 {
-                    Console.Write("Taux de guerison [par default : 20] > ");
+                    Console.Write("Taux de guerison [par default : 30] > ");
                     string c = Console.ReadLine();
                     if (c != "")
                     {
@@ -874,7 +873,6 @@ namespace jeuDeLaVie
                 int nCols = grille.GetUpperBound(1) + 1;
                 int voisins = VoisinsCovid(x, y);
 
-                int nombreDePersonneAContamine = (int)(tauxContamination / voisins);
                 int n = 0;
                 for (int i = x - 1; i <= x + 1; i++)
                 {
@@ -900,7 +898,7 @@ namespace jeuDeLaVie
                         }
                         if (grilleTemp[ti, tj] == stade.sain) // si la case est saine
                         {
-                            bool contamine = Chance(1 / tauxContamination); // on utilise la fonction Chance pour savoir si on contamine cette cellule
+                            bool contamine = Chance(tauxContamination); // on utilise la fonction Chance pour savoir si on contamine cette cellule
                             if (contamine) // si on la contamine on met dans la case d'index "n" les coordonnées de la case à contaminer sous forme d'un tableau
                             {
                                 res[n][0] = ti;
