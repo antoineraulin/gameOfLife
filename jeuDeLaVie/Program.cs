@@ -12,7 +12,7 @@ namespace jeuDeLaVie
         static int[,] guerisonGrille;
         static int gen = 1; //numéro de la génération en cours
         static int stadeDeconfinement; //numéro de la génération à partir de laquelle on autorise le déconfinement (version Covid)
-        bool test, test1; // deux booléens pour les tryParse
+        static bool test, test1; // deux booléens pour les tryParse
         public class Stade
         { //permet d'associer un stade comprehensible par un humain avec une couleur du GUI. Facilite ainsi la modification d'une couleur sans devoir réécrire l'entiereté du code et permet une lecture plus facile.
             public int sain = 4;
@@ -914,7 +914,7 @@ namespace jeuDeLaVie
         }
         static bool Chance(double proba)
         {
-            bool test = false;
+            bool chance = false;
             int alea = 0;
             if (proba == 0) // si proba = 0 (certitude d'échec), alea = -1
             {
@@ -924,9 +924,9 @@ namespace jeuDeLaVie
             {
                 alea = random.Next(1000)+1;
             }
-            test = (alea < proba*1000) ? true : false; // si alea < proba*1000 on renvoi true, sinon on renvoi false
+            chance = (alea < proba*1000) ? true : false; // si alea < proba*1000 on renvoi true, sinon on renvoi false
 
-            return test;
+            return chance;
         }
         static void AfficherMatrice(int[,] mat)
         {
