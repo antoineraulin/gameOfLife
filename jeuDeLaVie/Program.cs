@@ -143,7 +143,10 @@ namespace jeuDeLaVie
                     }
 
                     Console.WriteLine("après Evolution " + gen);
-                    AfficherMatrice(grille);
+                    if(param.affichageConsole)
+                    {
+                        AfficherMatrice(grille);
+                    }
                     if (ComparerGrilles(grille, grilleDeComparaison1, grilleDeComparaison2))
                     {
                         stop = true;
