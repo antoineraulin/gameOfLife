@@ -154,10 +154,11 @@ namespace jeuDeLaVie
                     gui.RafraichirTout();
                     int[] pop = PopulationTotale(grille);
                     gui.changerMessage($"Génération {gen}. Actuellement {pop[0]} cellules vivantes" + (pop.Length > 1 ? $"de la population noire et {pop[1]} pour les verts" : ""));
-                    System.Threading.Thread.Sleep(500);
+                    System.Threading.Thread.Sleep(100);
                     gen++;
 
                 }
+                gui.changerMessage("Terminé");
             }
             else
             {
@@ -194,17 +195,18 @@ namespace jeuDeLaVie
                     gui.RafraichirTout();
                     int[] pop = Population();
                     gui.changerMessage("Génération " + gen + " | sains non-immunisés : " + pop[0] + " | sains immunisés : " + pop[6] + " | stade 0 : " + pop[1] + " | stade 1 : " + pop[2] + " | stade 2 : " + pop[3] + " | stade 3 : " + pop[4] + " | morts : " + pop[5] + " | confinés : " + pop[7]);
-                    System.Threading.Thread.Sleep(500);
+                    System.Threading.Thread.Sleep(100);
                     //Console.ReadKey();
                     gen++;
                     if (pop[1] == 0 && pop[2] == 0 && pop[3] == 0 && pop[4] == 0)
                     {
                         //il n'y a plus de malade, on a atteint la stabilité
+                        gui.changerMessage("Terminé | Gen " + gen + " | sains non-immunisés : " + pop[0] + " | sains immunisés : " + pop[6] + " | stade 0 : " + pop[1] + " | stade 1 : " + pop[2] + " | stade 2 : " + pop[3] + " | stade 3 : " + pop[4] + " | morts : " + pop[5] + " | confinés : " + pop[7]);
                         stop = true;
                     }
                 }
             }
-            gui.changerMessage("Terminé");
+           
             Console.ReadKey();
         }
         static ParamJeuDeLaVie RecupererParametreJDLV()
