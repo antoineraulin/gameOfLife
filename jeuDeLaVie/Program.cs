@@ -12,6 +12,7 @@ namespace jeuDeLaVie
         static int[,] guerisonGrille;
         static int gen = 1; //numéro de la génération en cours
         static int stadeDeconfinement; //numéro de la génération à partir de laquelle on autorise le déconfinement (version Covid)
+        bool test, test1; // deux booléens pour les tryParse
         public class Stade
         { //permet d'associer un stade comprehensible par un humain avec une couleur du GUI. Facilite ainsi la modification d'une couleur sans devoir réécrire l'entiereté du code et permet une lecture plus facile.
             public int sain = 4;
@@ -74,7 +75,6 @@ namespace jeuDeLaVie
             //on demande à l'utilisateur quelle version du jeu il veut utiliser
         
                     int version = -1;
-                    bool test;
                     do
                     {
                         Console.WriteLine("Menu Version :");
@@ -212,7 +212,6 @@ namespace jeuDeLaVie
         static ParamJeuDeLaVie RecupererParametreJDLV()
         {
             int x, y;
-            bool test, test1;
             // On demande a l'utilisateur les dimensions de la grille souhaitée
             do
             {
@@ -279,7 +278,6 @@ namespace jeuDeLaVie
         static ParamCovid RecupererParametreCovid()
         {
             int x, y;
-            bool test, test1;
             // On demande a l'utilisateur les dimensions de la grille souhaitée
             do
             {
