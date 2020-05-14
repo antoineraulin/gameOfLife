@@ -465,13 +465,13 @@ namespace jeuDeLaVie
             ParamCovid res = new ParamCovid(x, y, versionChoice, tauxContamination, poidsStat, tauxConfinement, tailleCase, tauxGuerison, nombrePatientsZero);
             return res;
         }
-        static bool ComparerGrilles(int[,] grille1, int[,] grilleC1, int[,] grilleC2)
+        static bool ComparerGrilles(int[,] grille1, int[,] grilleC1, int[,] grilleC2) // on prend en compte les grilles de 3 générations successives (n, n-1 et n-2  avec n la génération actuelle)
         {
             int[] pop = PopulationTotale(grille1);
             int[] popC1 = PopulationTotale(grilleC1);
             int[] popC2 = PopulationTotale(grilleC2);
             bool res = false;
-            if (pop[0] == popC1[0] && pop[1] == popC1[1] && pop[0] == popC2[0] && pop[1] == popC2[1])
+            if (pop[0] == popC1[0] && pop[1] == popC1[1] && pop[0] == popC2[0] && pop[1] == popC2[1]) // si il y a autant de cellules vivantes de chaque famille, on considère que la grille s'est stabilisée
             {
                 res = true;
             }
@@ -500,7 +500,7 @@ namespace jeuDeLaVie
             MelangerGrille();
             AfficherMatrice(grille);
         }
-        static void InitGrilleCovid(int x, int y, int nombrePatientsZero, double tauxConfinement)
+        static void InitGrilleCovid(int x, int y, int nombrePatientsZero, double tauxConfinement) // même principe que pour InitGrilleJDLV
         {
 
             grille = new int[x, y];
@@ -734,53 +734,50 @@ namespace jeuDeLaVie
         }
         static void EvoluerCovid(int x, int y, double tauxContamination, double[] poidsStats, double tauxGuerison)
         {
-            if(gen == stadeDeconfinement && grille[x,y] == stade.confine){
+            if(gen == stadeDeconfinement && grille[x,y] == stade.confine){ // si la génération actuelle est celle où on commence le déconfinement et que la case était confinée, on la met en saine et non immunisée
                     grilleTemp[x,y] = stade.sain;
             }
-            if (grille[x, y] == stade.stade0 || grille[x, y] == stade.stade1 || grille[x, y] == stade.stade2 || grille[x, y] == stade.stade3) //si la cellule est malade...
+            else if (grille[x, y] == stade.stade0 || grille[x, y] == stade.stade1 || grille[x, y] == stade.stade2 || grille[x, y] == stade.stade3) // si la cellule est malade...
             {
                 int[][] contaminer = Contaminer(x, y, tauxContamination);
-                int[] test = { -1, -1 };
-                for (int i = 0; i < contaminer.Length; i++) //infecte les cellules autour d'elles qui doivent être contaminées (coordonnées envoyées par la fonction Contaminer)
+                for (int i = 0; i < contaminer.Length; i++) // infecte les cellules autour d'elles qui doivent être contaminées (coordonnées envoyées par la fonction Contaminer)
                 {
                     if (contaminer[i][0] != -1 && contaminer[i][1] != -1)
                     {
                         grilleTemp[contaminer[i][0], contaminer[i][1]] = stade.stade0;
                     }
                 }
-                if (grille[x, y] == stade.stade0)
+                if (grille[x, y] == stade.stade0) // si elle est au stade 1
                 {
                     
-                    if (guerisonGrille[x, y] != 5)
+                    if (guerisonGrille[x, y] != 5) // si on est dans le stade de guerison
                     {
-                        // on est dans le cycle de guérison
                         guerisonGrille[x, y]--;
                         if (guerisonGrille[x, y] == 0)
                         {
                             grilleTemp[x, y] = stade.immunise;
                         }
                     }
-                    else
+                    else // sinon...
                     {
-                        if (Chance(poidsStats[0]))
+                        if (Chance(poidsStats[0])) // si on la fonction Chance dit de passer au stade superieur
                         {
-                            grilleTemp[x, y] = stade.stade1;
-                            guerisonGrille[x,y] += 5;
+                            grilleTemp[x, y] = stade.stade1; // passe au stade suivant
+                            guerisonGrille[x,y] += 5; // ajoute 5 tours de guérison
                         }
                         else
                         {
-                            if (Chance(tauxGuerison))
+                            if (Chance(tauxGuerison)) // si la fonction Chance dit de commencer la guérison
                             {
-                                guerisonGrille[x, y]--;
+                                guerisonGrille[x, y]--; //on enlève 1 au nombre de tours restants pour guérir
                             }
                         }
                     }
                 }
-                else if (grille[x, y] == stade.stade1)
+                else if (grille[x, y] == stade.stade1) // même principe que quand la grille est au stade 0
                 {
                     if (guerisonGrille[x, y] != 10)
                     {
-                        // on est dans le cycle de guérison
                         guerisonGrille[x, y]--;
                         if (guerisonGrille[x, y] == 0)
                         {
@@ -804,11 +801,10 @@ namespace jeuDeLaVie
                     }
                     
                 }
-                else if (grille[x, y] == stade.stade2)
+                else if (grille[x, y] == stade.stade2) // même principe que quand la grille est au stade 0
                 {
                     if (guerisonGrille[x, y] != 15)
                     {
-                        // on est dans le cycle de guérison
                         guerisonGrille[x, y]--;
                         if (guerisonGrille[x, y] == 0)
                         {
@@ -832,11 +828,10 @@ namespace jeuDeLaVie
                     }
                     
                 }
-                else if (grille[x, y] == stade.stade3)
+                else if (grille[x, y] == stade.stade3) // même principe que quand la grille est au stade 0
                 {
                     if (guerisonGrille[x, y] != 20)
                     {
-                        // on est dans le cycle de guérison
                         guerisonGrille[x, y]--;
                         if (guerisonGrille[x, y] == 0)
                         {
