@@ -898,14 +898,14 @@ namespace jeuDeLaVie
                         {
                             tj -= nCols;
                         }
-                        if (grilleTemp[ti, tj] == stade.sain)
+                        if (grilleTemp[ti, tj] == stade.sain) // si la case est saine
                         {
-                            bool contamine = Chance(1 / tauxContamination);
-                            if (contamine)
+                            bool contamine = Chance(1 / tauxContamination); // on utilise la fonction Chance pour savoir si on contamine cette cellule
+                            if (contamine) // si on la contamine on met dans la case d'index "n" les coordonnées de la case à contaminer sous forme d'un tableau
                             {
                                 res[n][0] = ti;
                                 res[n][1] = tj;
-                                n++;
+                                n++; //on ajoute 1 à "n" pour que la prochaine cellule à contaminer ne prène pas la place de la précédente
                             }
                         }
                     }
@@ -917,17 +917,16 @@ namespace jeuDeLaVie
         {
             bool test = false;
             int alea = 0;
-            double nombre = 0;
-            if (proba == 0)
+            if (proba == 0) // si proba = 0 (certitude d'échec), alea = -1
             {
                 alea = -1;
             }
-            else
+            else // on multiplie la proba par 1000 et on tire une valeur aléatoire entre 1 et 1000
             {
-                nombre = proba * 1000;
-                alea = random.Next(1000);
-                test = (alea < nombre) ? true : false;
+                alea = random.Next(1000)+1;
             }
+            test = (alea < proba*1000) ? true : false; // si alea < proba*1000 on renvoi true, sinon on renvoi false
+
             return test;
         }
         static void AfficherMatrice(int[,] mat)
