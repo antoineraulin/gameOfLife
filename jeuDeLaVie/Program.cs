@@ -74,14 +74,15 @@ namespace jeuDeLaVie
             //on demande à l'utilisateur quelle version du jeu il veut utiliser
         
                     int version = -1;
+                    bool test;
                     do
                     {
                         Console.WriteLine("Menu Version :");
                         Console.WriteLine("[0]  Jeu De La Vie");
                         Console.WriteLine("[1]  Version Covid");
                         Console.Write("Votre choix > ");
-                        int.TryParse(Console.ReadLine(), out version);
-                    } while (version == -1 || version > 1);
+                        test = int.TryParse(Console.ReadLine(), out version);
+                    } while (version == -1 || version > 1 || !test);
                     
                     if (version == 0)
                     {
@@ -211,29 +212,30 @@ namespace jeuDeLaVie
         static ParamJeuDeLaVie RecupererParametreJDLV()
         {
             int x, y;
+            bool test, test1;
             // On demande a l'utilisateur les dimensions de la grille souhaitée
             do
             {
                 Console.Write("Dimensions de la grille [format : ?x? => ex : 10x12] > ");
                 Regex regex = new Regex("^(.*?)x(.*?)$"); // on utilise une regular expression pour recuperer les infos d'un string selon un format particulier : ici on donne par exemple 10x12 et on obtiens 10 et 12
                 Match match = regex.Match(Console.ReadLine());
-                int.TryParse(match.Groups[1].Value, out x);
-                int.TryParse(match.Groups[2].Value, out y);
-            } while (x < 1 || y < 1);
+                test = int.TryParse(match.Groups[1].Value, out x);
+                test1 = int.TryParse(match.Groups[2].Value, out y);
+            } while (x < 1 || y < 1 || !test || !test1);
             //on demande a l'utilisateur le taux de remplissage:
             double tauxRemplissage;
             do
             {
                 Console.Write("Taux de remplissage [0,1 ; 0,9] > ");
-                double.TryParse(Console.ReadLine().Replace('.', ','), out tauxRemplissage); // il faut remplacer les . dans le nombre si l'utilisateur en met parce que tryparse ne sait pas convertir un double contenant un point pour la virgule.
-            } while (tauxRemplissage == 0.0d || tauxRemplissage < 0.1 || tauxRemplissage > 0.9);
+                test = double.TryParse(Console.ReadLine().Replace('.', ','), out tauxRemplissage); // il faut remplacer les . dans le nombre si l'utilisateur en met parce que tryparse ne sait pas convertir un double contenant un point pour la virgule.
+            } while (tauxRemplissage == 0.0d || tauxRemplissage < 0.1 || tauxRemplissage > 0.9 || !test);
             //on demande a l'utilisateur la taille des case du GUI
             int tailleCase;
             do
             {
                 Console.Write("Taille des cases du GUI (> 1) > ");
-                int.TryParse(Console.ReadLine(), out tailleCase);
-            } while (tailleCase < 1);
+                test = int.TryParse(Console.ReadLine(), out tailleCase);
+            } while (tailleCase < 1 || !test);
             //on demande à l'utilisateur quelle version du jeu il veut utiliser
             int versionChoice = -1;
             do
@@ -242,8 +244,8 @@ namespace jeuDeLaVie
                 Console.WriteLine("[0]  Jeu DLV classique");
                 Console.WriteLine("[1]  Jeu DLV variante");
                 Console.Write("Votre choix > ");
-                int.TryParse(Console.ReadLine(), out versionChoice);
-            } while (versionChoice == -1 || versionChoice > 1);
+                test = int.TryParse(Console.ReadLine(), out versionChoice);
+            } while (versionChoice == -1 || versionChoice > 1 || !test);
             //on demande a l'utilisateur si il veut voir les étapes intermédiaires
             int visuStateChoice = -1;
             do
@@ -252,8 +254,8 @@ namespace jeuDeLaVie
                 Console.WriteLine("[0]  Jeu DLV sans visualisation intermédiaire des états futurs ");
                 Console.WriteLine("[1]  Jeu DLV avec visualisation des états futurs (à naître et à mourir)");
                 Console.Write("Votre choix > ");
-                int.TryParse(Console.ReadLine(), out visuStateChoice);
-            } while (visuStateChoice == -1 || visuStateChoice > 1);
+                test = int.TryParse(Console.ReadLine(), out visuStateChoice);
+            } while (visuStateChoice == -1 || visuStateChoice > 1 || !test);
             bool visuState = visuStateChoice == 0 ? false : true;
             //on demande a l'utilisateur si il veut voir la grille dans la console
             int _affichageConsole = -1;
@@ -277,15 +279,16 @@ namespace jeuDeLaVie
         static ParamCovid RecupererParametreCovid()
         {
             int x, y;
+            bool test, test1;
             // On demande a l'utilisateur les dimensions de la grille souhaitée
             do
             {
                 Console.Write("Dimensions de la grille [format : ?x? => ex : 10x12] > ");
                 Regex regex = new Regex("^(.*?)x(.*?)$"); // on utilise une regular expression pour recuperer les infos d'un string selon un format particulier : ici on donne par exemple 10x12 et on obtiens 10 et 12
                 Match match = regex.Match(Console.ReadLine());
-                int.TryParse(match.Groups[1].Value, out x);
-                int.TryParse(match.Groups[2].Value, out y);
-            } while (x < 1 || y < 1);
+                test = int.TryParse(match.Groups[1].Value, out x);
+                test1 = int.TryParse(match.Groups[2].Value, out y);
+            } while (x < 1 || y < 1 || !test || !test1);
 
             // on demande a l'utilisateur le mode de la simulation:
             int versionChoice = -1;
@@ -295,8 +298,8 @@ namespace jeuDeLaVie
                 Console.WriteLine("[0]  Sans confinement");
                 Console.WriteLine("[1]  Avec confinement");
                 Console.Write("Votre choix > ");
-                int.TryParse(Console.ReadLine(), out versionChoice);
-            } while (versionChoice == -1 || versionChoice > 1);
+                test = int.TryParse(Console.ReadLine(), out versionChoice);
+            } while (versionChoice == -1 || versionChoice > 1 || !test);
 
             // on demande a l'utilisateur s'il veut du  mode avancé.
             int advancedChoice = -1;
@@ -448,14 +451,14 @@ namespace jeuDeLaVie
                 do
                 {
                     Console.Write("Nombre de patients zero (> 0) > ");
-                    int.TryParse(Console.ReadLine(), out nombrePatientsZeroAdvanced);
-                } while (nombrePatientsZeroAdvanced == 0 || nombrePatientsZeroAdvanced < 0);
+                    test = int.TryParse(Console.ReadLine(), out nombrePatientsZeroAdvanced);
+                } while (nombrePatientsZeroAdvanced == 0 || nombrePatientsZeroAdvanced < 0 || !test);
                 nombrePatientsZero = nombrePatientsZeroAdvanced;
                 do
                 {
                     Console.Write("Taille des cases du GUI (> 1) > ");
-                    int.TryParse(Console.ReadLine(), out tailleCase);
-                } while (tailleCase < 1);
+                    test = int.TryParse(Console.ReadLine(), out tailleCase);
+                } while (tailleCase < 1 || !test);
 
 
             }
